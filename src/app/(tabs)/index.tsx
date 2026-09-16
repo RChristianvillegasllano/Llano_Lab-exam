@@ -1,8 +1,38 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Image, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { EventItem, useEventContext } from '../../context/EventContext';
 
 export default function FeedScreen() {
+  const events: EventItem[] = [
+    {
+      id: 'e1',
+      title: 'DCE KAMUSTAHAN 2026',
+      location: 'UM Visayan',
+      date: 'Oct 24, 3:00 PM',
+      isOffline: true,
+      organizer: 'Department of Computing Education',
+      eventImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      id: 'e2',
+      title: 'Campus Career Fair',
+      location: 'University Sports Hall',
+      date: 'Nov 2, 9:00 AM',
+      isOffline: true,
+      organizer: 'UMTC Alumini Association',
+      eventImage: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      id: 'e3',
+      title: 'AI Guest Lecture',
+      location: 'Room 304 B1',
+      date: 'Nov 10, 1:00 PM',
+      isOffline: true,
+      organizer: 'DCE Faculty',
+      eventImage: 'https://images.unsplash.com/photo-1475721025599-590528b33fac?auto=format&fit=crop&w=800&q=80'
+    }
+  ];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -11,88 +41,92 @@ export default function FeedScreen() {
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="menu-outline" size={26} color="#111" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>EventMate</Text>
+          <Text style={styles.headerTitle}>Campus Events</Text>
           <TouchableOpacity style={styles.iconButton}>
             <View style={styles.notificationBadge} />
             <Ionicons name="notifications-outline" size={24} color="#111" />
           </TouchableOpacity>
         </View>
 
-        {/* Stories */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesContainer} contentContainerStyle={styles.storiesContent}>
-          <View style={styles.storyItem}>
-            <TouchableOpacity style={styles.addStoryCircle}>
-              <Ionicons name="add" size={28} color="#111" />
-            </TouchableOpacity>
-            <Text style={styles.storyName}>Add Story</Text>
-          </View>
-          <StoryItem name="Rafd" image="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80" />
-          <StoryItem name="June Doe" image="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" />
-          <StoryItem name="Ashik Saha" image="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=150&q=80" />
-        </ScrollView>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search-outline" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            placeholder="Search offline events..."
+            placeholderTextColor="#888"
+            style={styles.searchInput}
+          />
+        </View>
 
         {/* Tabs */}
         <View style={styles.tabsContainer}>
           <TouchableOpacity style={[styles.tab, styles.activeTab]}>
-            <Text style={[styles.tabText, styles.activeTabText]}>Recent</Text>
+            <Text style={[styles.tabText, styles.activeTabText]}>Upcoming</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Events</Text>
+            <Text style={styles.tabText}>Offline</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.tab}>
-            <Text style={styles.tabText}>Trending</Text>
+            <Text style={styles.tabText}>Saved</Text>
           </TouchableOpacity>
         </View>
 
         {/* Feed Posts */}
         <View style={styles.feedContainer}>
-          <PostCard
-            name="Ronald Christian Llano"
-            location="UMV"
-            time="18m ago"
-            avatar="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=150&q=80"
-            postImage="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
-          />
-          <PostCard
-            name="June Doe"
-            location="UM Lapu Lapu Gate"
-            time="34m ago"
-            avatar="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-            postImage="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80"
-          />
+          {events.map(event => (
+            <EventCard key={event.id} event={event} />
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function StoryItem({ name, image }: { name: string, image: string }) {
-  return (
-    <View style={styles.storyItem}>
-      <Image source={{ uri: image }} style={styles.storyImage} />
-      <Text style={styles.storyName} numberOfLines={1}>{name}</Text>
-    </View>
-  );
-}
+function EventCard({ event }: { event: EventItem }) {
+  const { joinEvent, leaveEvent, isJoined } = useEventContext();
+  const joined = isJoined(event.id);
 
-function PostCard({ name, location, time, avatar, postImage }: { name: string, location: string, time: string, avatar: string, postImage: string }) {
   return (
     <View style={styles.postCard}>
       <View style={styles.postHeader}>
-        <Image source={{ uri: avatar }} style={styles.postAvatar} />
         <View style={styles.postMeta}>
-          <Text style={styles.postName}>{name}</Text>
-          <View style={styles.postLocationRow}>
-            <Ionicons name="location-outline" size={14} color="#208AEF" />
-            <Text style={styles.postLocation}>{location}</Text>
-            <Text style={styles.postTime}> • {time}</Text>
-          </View>
+          <Text style={styles.postName}>{event.title}</Text>
+          <Text style={styles.organizerName}>by {event.organizer}</Text>
         </View>
         <TouchableOpacity style={styles.bookmarkButton}>
           <Ionicons name="bookmark-outline" size={22} color="#A0A0A0" />
         </TouchableOpacity>
       </View>
-      <Image source={{ uri: postImage }} style={styles.postImage} />
+      <TouchableOpacity activeOpacity={0.9}>
+        <Image source={{ uri: event.eventImage }} style={styles.postImage} />
+      </TouchableOpacity>
+
+      <View style={styles.eventDetails}>
+        <View style={styles.eventDetailRow}>
+          <Ionicons name="calendar-outline" size={16} color="#208AEF" />
+          <Text style={styles.eventDetailText}>{event.date}</Text>
+        </View>
+        <View style={styles.eventDetailRow}>
+          <Ionicons name="location-outline" size={16} color="#208AEF" />
+          <Text style={styles.eventDetailText}>{event.location}</Text>
+        </View>
+
+        {event.isOffline && (
+          <View style={styles.offlineBadge}>
+            <Ionicons name="wifi-outline" size={12} color="#FFF" />
+            <Text style={styles.offlineBadgeText}>Offline Event</Text>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={[styles.joinButton, joined && styles.joinedButton]}
+          onPress={() => joined ? leaveEvent(event.id) : joinEvent(event)}
+        >
+          <Text style={[styles.joinButtonText, joined && styles.joinedButtonText]}>
+            {joined ? 'Joined' : 'Join Event'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -139,41 +173,24 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111',
   },
-  storiesContainer: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EBEBEB',
+    marginHorizontal: 20,
+    borderRadius: 12,
+    paddingHorizontal: 12,
     marginBottom: 20,
+    height: 48,
   },
-  storiesContent: {
-    paddingHorizontal: 20,
-    gap: 16,
+  searchIcon: {
+    marginRight: 8,
   },
-  storyItem: {
-    alignItems: 'center',
-    width: 64,
-  },
-  addStoryCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    marginBottom: 8,
-  },
-  storyImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    marginBottom: 8,
-    borderWidth: 2,
-    borderColor: '#208AEF',
-  },
-  storyName: {
-    fontSize: 12,
-    color: '#555',
-    fontWeight: '500',
-    textAlign: 'center',
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: '#333',
+    height: '100%',
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -183,7 +200,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     paddingVertical: 10,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     borderRadius: 20,
   },
   activeTab: {
@@ -216,42 +233,75 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  postAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-  },
   postMeta: {
     flex: 1,
   },
   postName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: '#111',
     marginBottom: 4,
   },
-  postLocationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  postLocation: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#208AEF',
-    marginLeft: 2,
-  },
-  postTime: {
-    fontSize: 12,
-    color: '#A0A0A0',
+  organizerName: {
+    fontSize: 13,
+    color: '#777',
+    fontWeight: '500',
   },
   bookmarkButton: {
     padding: 4,
   },
   postImage: {
     width: '100%',
-    height: 250,
+    height: 200,
     borderRadius: 16,
     backgroundColor: '#F0F0F0',
+    marginBottom: 16,
+  },
+  eventDetails: {
+    gap: 8,
+  },
+  eventDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  eventDetailText: {
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  offlineBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  offlineBadgeText: {
+    color: '#FFF',
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  joinButton: {
+    backgroundColor: '#208AEF',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  joinedButton: {
+    backgroundColor: '#EBEBEB',
+  },
+  joinButtonText: {
+    color: '#FFF',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  joinedButtonText: {
+    color: '#555',
   }
 });

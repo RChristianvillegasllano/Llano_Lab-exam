@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Text } from 'react-native';
@@ -32,29 +32,23 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Feed',
-          tabBarIcon: ({ color }) => <Ionicons name="documents-outline" size={24} color={color} />,
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <Ionicons name="compass-outline" size={24} color={color as string} />,
         }}
       />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ color }) => <Ionicons name="chatbubble-ellipses-outline" size={24} color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="search"
         options={{
           title: 'Search',
-          tabBarIcon: ({ color }) => <Ionicons name="search-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="search-outline" size={24} color={color as string} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name="person-circle-outline" size={24} color={color as string} />,
         }}
       />
     </Tabs>
